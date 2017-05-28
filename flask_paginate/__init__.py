@@ -19,50 +19,56 @@ __version__ = '0.4.5'
 
 PY2 = sys.version_info[0] == 2
 
-_bs_prev_page = '<li class="previous"><a href="{0}">{1}</a></li>'
+_bs_prev_page = '<li class="page-item previous"><a class="page-link" href="{0}">{1}</a></li>'
 PREV_PAGES = dict(bootstrap=_bs_prev_page,
                   bootstrap2=_bs_prev_page,
                   bootstrap3=_bs_prev_page,
+                  bootstrap4=_bs_prev_page,
                   foundation='<li class="arrow"><a href="{0}">{1}</a></li>',
                   )
 
-_bs_next_page = '<li class="next"><a href="{0}">{1}</a></li>'
+_bs_next_page = '<li class="page-item next"><a class="page-link" href="{0}">{1}</a></li>'
 NEXT_PAGES = dict(bootstrap=_bs_next_page,
                   bootstrap2=_bs_next_page,
                   bootstrap3=_bs_next_page,
+                  bootstrap4=_bs_next_page,
                   foundation='<li class="arrow"><a href="{0}">{1}</a></li>',
                   )
 
 CURRENT_PAGES = dict(bootstrap='<li class="active"><a>{0}</a></li>',
                      bootstrap3='<li class="active"><a>{0}</a></li>',
+                     bootstrap4='<li class="page-item active"><a class="page-link">{0}</a></li>',
                      foundation='<li class="current"><a>{0}</a></li>',
                      )
 CURRENT_PAGES.update(bootstrap2=CURRENT_PAGES['bootstrap'])
 
-LINK = '<li><a href="{0}">{1}</a></li>'
-FA_LINK = '<li class="unavailable"><a>{0}</a></li>'
+LINK = '<li class="page-item"><a class="page-link" href="{0}">{1}</a></li>'
+FA_LINK = '<li class="page-item unavailable"><a>{0}</a></li>'
 
-GAP_MARKERS = dict(bootstrap='<li class="disabled"><a>...</a></li>',
+GAP_MARKERS = dict(bootstrap='<li class="page-item disabled"><a class="page-link">...</a></li>',
                    foundation='<li class="unavailable">\
                    <a>...</a></li>',
                    )
 GAP_MARKERS.update(bootstrap2=GAP_MARKERS['bootstrap'],
                    bootstrap3=GAP_MARKERS['bootstrap'],
+                   bootstrap4=GAP_MARKERS['bootstrap'],
                    )
 
-_bs_prev_disabled_page = '<li class="previous disabled unavailable">\
-<a> {0} </a></li>'
+_bs_prev_disabled_page = '<li class="page-item previous disabled unavailable">\
+<a class="page-link"> {0} </a></li>'
 PREV_DISABLED_PAGES = dict(bootstrap=_bs_prev_disabled_page,
                            bootstrap2=_bs_prev_disabled_page,
                            bootstrap3=_bs_prev_disabled_page,
+                           bootstrap4=_bs_prev_disabled_page,
                            foundation=FA_LINK,
                            )
 
-_bs_next_disabled_page = '<li class="next disabled">\
-<a> {0} </a></li>'
+_bs_next_disabled_page = '<li class="page-item next disabled">\
+<a class="page-link"> {0} </a></li>'
 NEXT_DISABLED_PAGES = dict(bootstrap=_bs_next_disabled_page,
                            bootstrap2=_bs_next_disabled_page,
                            bootstrap3=_bs_next_disabled_page,
+                           bootstrap4=_bs_next_disabled_page,
                            foundation=FA_LINK,
                            )
 
@@ -70,20 +76,23 @@ PREV_LABEL = '&laquo;'
 NEXT_LABEL = '&raquo;'
 RECORD_NAME = 'records'
 
-DISPLAY_MSG = '''displaying <b>{start} - {end}</b> {record_name} in
-total <b>{total}</b>'''
+# DISPLAY_MSG = '''displaying <b>{start} - {end}</b> {record_name} in
+# total <b>{total}</b>'''
+DISPLAY_MSG = '''검색결과&nbsp;<strong>{total}</strong>개 중&nbsp;<strong>{start} - {end}</strong>&nbsp;({record_name}초)'''
 
 SEARCH_MSG = '''found <b>{found}</b> {record_name},
 displaying <b>{start} - {end}</b>'''
 
 CSS_LINKS = dict(bootstrap='<div class="pagination{0}{1}"><ul>',
-                 bootstrap2='<div class="pagination{0}{1}"><ul>',
+                 bootstrap2='<div class="css1 pagination{0}{1}"><ul>',
                  bootstrap3='<ul class="pagination{0}{1}">',
+                 bootstrap4='<ul class="pagination{0}{1} justify-content-center">',
                  foundation='<ul class="pagination{0}{1}">',
                  )
 CSS_LINKS_END = dict(bootstrap='</ul></div>',
                      bootstrap2='</ul></div>',
                      bootstrap3='</ul>',
+                     bootstrap4='</ul>',
                      foundation='</ul>',
                      )
 
@@ -187,6 +196,8 @@ class Pagination(object):
         if self.css_framework.startswith('bootstrap'):
             if self.bs_version in (3, '3'):
                 self.css_framework = 'bootstrap3'
+            if self.bs_version in (4, '4'):
+                self.css_framework = 'bootstrap4'
 
         self.link_size = kwargs.get('link_size', '')
         if self.link_size:
@@ -372,6 +383,7 @@ class Pagination(object):
         if start > self.total:
             start = self.total if not self.search else self.found
 
+        # s = ['<div class="pagination-page-info d-flex justify-content-center">']
         s = ['<div class="pagination-page-info">']
         page_msg = self.search_msg if self.search else self.display_msg
         if self.format_total:
